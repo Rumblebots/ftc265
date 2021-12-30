@@ -1,15 +1,17 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 apply from: "$project.rootDir/spotless.gradle"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
+group = 'com.github.Rumblebots'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
-    ndkVersion "21.0.6113669"
+    ndkVersion "21.1.6352462"
 
     defaultConfig {
         minSdkVersion 24
@@ -108,3 +110,33 @@ task extractSo(type: Sync) {
 preBuild.dependsOn(extractHeaders)
 preBuild.dependsOn(extractSo)
 
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                groupId = "com.github.Rumblebots"
+                artifactId "ftc265"
+                version = android.defaultConfig.versionName
+                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    configurations.implementation.allDependencies.each {
+                        if (it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                            if (it.name == "librealsense") {
+                                // There's no way to programmatically get the dependency classifier so we just check the name
+                                // This is important because otherwise Gradle will try to resolve this dep as a jar
+                                dependencyNode.appendNode('type', 'aar')
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
