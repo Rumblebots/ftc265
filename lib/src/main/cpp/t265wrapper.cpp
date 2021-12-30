@@ -87,8 +87,8 @@ constexpr auto odometryConfig = R"(
                     %f
                 ],
                 "T_variance": [
-                    9.999999974752427e-7, 
-                    9.999999974752427e-7, 
+                    9.999999974752427e-7,
+                    9.999999974752427e-7,
                     9.999999974752427e-7
                 ],
                 "W": [
@@ -97,8 +97,8 @@ constexpr auto odometryConfig = R"(
                     0.0
                 ],
                 "W_variance": [
-                    9.999999974752427e-5, 
-                    9.999999974752427e-5, 
+                    9.999999974752427e-5,
+                    9.999999974752427e-5,
                     9.999999974752427e-5
                 ]
             }
@@ -221,6 +221,19 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
         auto poseData = frame.as<rs2::pose_frame>().get_pose_data();
         // rotation is a quaternion so we must convert to an euler angle (yaw)
         auto yaw = 2 * atan2f(poseData.rotation.y, poseData.rotation.w);
+
+        float w = poseData.rotation.w;
+        float x = poseData.rotation.z;
+        float z = poseData.rotation.y;
+        float y = poseData.rotation.x;
+
+        float pitch = -asin(2.0 * (x * z - w * y)) * 180.0 / M_PI;
+        float roll = atan2(2.0 * (w * x + y * z), w * w - x * x - y * y + z * z) * 180.0 / M_PI;
+        float calcYaw = atan2(2.0 * (w * z + x * y), w * w + x * x - y * y - z * z) * 180.0 / M_PI;
+
+        std::cout << "Pitch: " << pitch << endl;
+        std::cout << "Yaw: " << calcYaw << endl;
+        std::cout << "Roll: " << roll << endl;
 
         auto callbackMethodID =
             env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFI)V");
