@@ -231,9 +231,9 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
         float roll = atan2(2.0 * (w * x + y * z), w * w - x * x - y * y + z * z) * 180.0 / M_PI;
         float calcYaw = atan2(2.0 * (w * z + x * y), w * w + x * x - y * y - z * z) * 180.0 / M_PI;
 
-        std::cout << "Pitch: " << pitch << endl;
-        std::cout << "Yaw: " << calcYaw << endl;
-        std::cout << "Roll: " << roll << endl;
+        std::cout << "Pitch: " << pitch << std::endl;
+        std::cout << "Yaw: " << calcYaw << std::endl;
+        std::cout << "Roll: " << roll << std::endl;
 
         auto callbackMethodID =
             env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFI)V");
