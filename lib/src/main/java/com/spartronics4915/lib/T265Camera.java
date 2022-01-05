@@ -350,7 +350,10 @@ public class T265Camera {
     private static native void cleanup();
 
     private synchronized void consumePoseUpdate(
-            float x, float y, float radians, float dx, float dy, float dtheta, int confOrdinal) {
+            float x, float y, float radians, float dx, float dy, float dtheta, int confOrdinal, float gPitch, float gYaw, float gRoll) {
+        System.out.println("Calc Pitch: " + gPitch);
+        System.out.println("Calc Yaw: " + gYaw);
+        System.out.println("Calc Roll: " + gRoll);
         // First we apply an offset to go from the camera coordinate system to the
         // robot coordinate system with an origin at the center of the robot. This
         // is not a directional transformation.

@@ -231,12 +231,12 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
         float roll = atan2(2.0 * (w * x + y * z), w * w - x * x - y * y + z * z) * 180.0 / M_PI;
         float calcYaw = atan2(2.0 * (w * z + x * y), w * w + x * x - y * y - z * z) * 180.0 / M_PI;
 
-        std::cout << "Pitch: " << pitch << std::endl;
-        std::cout << "Yaw: " << calcYaw << std::endl;
-        std::cout << "Roll: " << roll << std::endl;
+//        std::cout << "Pitch: " << pitch << std::endl;
+//        std::cout << "Yaw: " << calcYaw << std::endl;
+//        std::cout << "Roll: " << roll << std::endl;
 
         auto callbackMethodID =
-            env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFI)V");
+            env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFIFFF)V");
         if (!callbackMethodID)
           throw std::runtime_error("consumePoseUpdate method doesn't exist");
 
@@ -246,7 +246,7 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
                             -poseData.translation.z, -poseData.translation.x,
                             yaw, -poseData.velocity.z, -poseData.velocity.x,
                             poseData.angular_velocity.y,
-                            poseData.tracker_confidence);
+                            poseData.tracker_confidence, pitch, calcYaw, roll);
 
         std::scoped_lock lk(devAndSensors->frameNumMutex);
         devAndSensors->lastRecvdFrameNum = frame.get_frame_number();
