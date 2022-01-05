@@ -222,10 +222,14 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
         // rotation is a quaternion so we must convert to an euler angle (yaw)
         auto yaw = 2 * atan2f(poseData.rotation.y, poseData.rotation.w);
 
-        float w = poseData.rotation.w;
-        float x = poseData.rotation.z;
-        float z = poseData.rotation.y;
-        float y = poseData.rotation.x;
+        auto w = poseData.rotation.w;
+        auto x = -poseData.rotation.z;
+        auto y = poseData.rotation.x;
+        auto z = -poseData.rotation.y;
+
+//        auto pitch =  -asin(2.0 * (x*z - w*y)) * 180.0 / M_PI;
+//        auto roll  =  atan2(2.0 * (w*x + y*z), w*w - x*x - y*y + z*z) * 180.0 / M_PI;
+//        auto yaw   =  atan2(2.0 * (w*z + x*y), w*w + x*x - y*y - z*z) * 180.0 / M_PI;
 
         float pitch = -asin(2.0 * (x * z - w * y)) * 180.0 / M_PI;
         float roll = atan2(2.0 * (w * x + y * z), w * w - x * x - y * y + z * z) * 180.0 / M_PI;
