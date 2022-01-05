@@ -357,12 +357,12 @@ public class T265Camera {
             float dy,
             float dtheta,
             int confOrdinal,
-            float gPitch,
-            float gYaw,
-            float gRoll) {
-        System.out.println("Calc Pitch: " + gPitch);
-        System.out.println("Calc Yaw: " + gYaw);
-        System.out.println("Calc Roll: " + gRoll);
+            float camX,
+            float camY,
+            float camZ) {
+        System.out.println("Calc X: " + camX);
+        System.out.println("Calc Y: " + camY);
+        System.out.println("Calc Z: " + camZ);
         // First we apply an offset to go from the camera coordinate system to the
         // robot coordinate system with an origin at the center of the robot. This
         // is not a directional transformation.

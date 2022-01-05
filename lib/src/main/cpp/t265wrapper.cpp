@@ -248,9 +248,9 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
             hypotf(-poseData.velocity.z, -poseData.velocity.x);
         env->CallVoidMethod(devAndSensors->globalThis, callbackMethodID,
                             -poseData.translation.z, -poseData.translation.x,
-                            yaw, -poseData.velocity.z, -poseData.velocity.x,
+                            calcYaw, -poseData.velocity.z, -poseData.velocity.x,
                             poseData.angular_velocity.y,
-                            poseData.tracker_confidence, pitch, calcYaw, roll);
+                            poseData.tracker_confidence, poseData.translation.x, poseData.translation.y, poseData.translation.z);
 
         std::scoped_lock lk(devAndSensors->frameNumMutex);
         devAndSensors->lastRecvdFrameNum = frame.get_frame_number();
