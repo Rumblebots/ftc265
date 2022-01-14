@@ -66,10 +66,43 @@ public class T265Camera {
 
         public final PoseConfidence confidence;
 
+        public final float rW, rX, rY, rZ;
+        public final float posX, posY, posZ;
+
         public CameraUpdate(Pose2d pose, ChassisSpeeds velocity, PoseConfidence confidence) {
             this.pose = pose;
             this.velocity = velocity;
             this.confidence = confidence;
+            this.rW = 0;
+            this.rX = 0;
+            this.rY = 0;
+            this.rZ = 0;
+            this.posX = 0;
+            this.posY = 0;
+            this.posZ = 0;
+        }
+
+        public CameraUpdate(
+                Pose2d pose,
+                ChassisSpeeds velocity,
+                PoseConfidence confidence,
+                float rW,
+                float rX,
+                float rY,
+                float rZ,
+                float posX,
+                float posY,
+                float posZ) {
+            this.pose = pose;
+            this.velocity = velocity;
+            this.confidence = confidence;
+            this.rW = rW;
+            this.rX = rX;
+            this.rY = rY;
+            this.rZ = rZ;
+            this.posX = posX;
+            this.posY = posY;
+            this.posZ = posZ;
         }
     }
 
@@ -359,10 +392,11 @@ public class T265Camera {
             int confOrdinal,
             float camX,
             float camY,
-            float camZ) {
-        System.out.println("Calc X: " + camX);
-        System.out.println("Calc Y: " + camY);
-        System.out.println("Calc Z: " + camZ);
+            float camZ,
+            float rotW,
+            float rotX,
+            float rotY,
+            float rotZ) {
         // First we apply an offset to go from the camera coordinate system to the
         // robot coordinate system with an origin at the center of the robot. This
         // is not a directional transformation.
@@ -406,7 +440,17 @@ public class T265Camera {
                         new Transform2d(currentPose.getTranslation(), currentPose.getRotation()));
 
         mPoseConsumer.accept(
-                new CameraUpdate(transformedPose, new ChassisSpeeds(dx, dy, dtheta), confidence));
+                new CameraUpdate(
+                        transformedPose,
+                        new ChassisSpeeds(dx, dy, dtheta),
+                        confidence,
+                        rotW,
+                        rotX,
+                        rotY,
+                        rotZ,
+                        camX,
+                        camY,
+                        camZ));
     }
 
     /** Thrown if something goes wrong in the native code */

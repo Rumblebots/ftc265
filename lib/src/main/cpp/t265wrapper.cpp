@@ -82,8 +82,8 @@ constexpr auto odometryConfig = R"(
             "noise_variance": %f,
             "extrinsics": {
                 "T": [
-                    %f,
                     0.0,
+                    %f,
                     %f
                 ],
                 "T_variance": [
@@ -92,8 +92,8 @@ constexpr auto odometryConfig = R"(
                     9.999999974752427e-7
                 ],
                 "W": [
-                    0.0,
                     %f,
+                    0.0,
                     0.0
                 ],
                 "W_variance": [
@@ -208,7 +208,6 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
     // Need to new because the lifetime of this object is controlled by Java
     // code and we set a field in the Java class to this pointer
     devAndSensors = new deviceAndSensors(pipeline, odom, pose, globalThis);
-
     auto consumerCallback = [jvm, devAndSensors](const rs2::frame &frame) {
       JNIEnv *env = nullptr;
       try {
@@ -240,17 +239,19 @@ Java_com_spartronics4915_lib_T265Camera_newCamera(JNIEnv *env, jobject thisObj,
 //        std::cout << "Roll: " << roll << std::endl;
 
         auto callbackMethodID =
-            env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFIFFF)V");
+            env->GetMethodID(holdingClass, "consumePoseUpdate", "(FFFFFFIFFFFFFF)V");
         if (!callbackMethodID)
           throw std::runtime_error("consumePoseUpdate method doesn't exist");
 
         auto velocityMagnitude =
             hypotf(-poseData.velocity.z, -poseData.velocity.x);
         env->CallVoidMethod(devAndSensors->globalThis, callbackMethodID,
-                            -poseData.translation.z, -poseData.translation.x,
-                            calcYaw, -poseData.velocity.z, -poseData.velocity.x,
+                            -poseData.translation.z, -poseData.translation.y,
+                            yaw, -poseData.velocity.z, -poseData.velocity.x,
                             poseData.angular_velocity.y,
-                            poseData.tracker_confidence, poseData.translation.x, poseData.translation.y, poseData.translation.z);
+                            poseData.tracker_confidence, poseData.translation.x,
+                            poseData.translation.y, poseData.translation.z,
+                            poseData.rotation.w, poseData.rotation.x, poseData.rotation.y, poseData.rotation.z);
 
         std::scoped_lock lk(devAndSensors->frameNumMutex);
         devAndSensors->lastRecvdFrameNum = frame.get_frame_number();
